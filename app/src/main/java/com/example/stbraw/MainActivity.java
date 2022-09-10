@@ -19,6 +19,10 @@ import android.widget.Toast;
 import com.example.stbraw.async.AsyncResponse;
 import com.example.stbraw.async.DownloadFromInternet;
 import com.example.stbraw.ml.BagModel;
+import com.vansuita.pickimage.bean.PickResult;
+import com.vansuita.pickimage.bundle.PickSetup;
+import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.listeners.IPickResult;
 
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
@@ -27,10 +31,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AsyncResponse {
+public class MainActivity extends AppCompatActivity implements AsyncResponse, IPickResult {
     DownloadFromInternet dd = new DownloadFromInternet();
     TextView predictionView;
     Button upload_img_btn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +54,23 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                 Intent i = new Intent();
                 i.setType("image/*");
                 i.setAction(Intent.ACTION_GET_CONTENT);
-
-                launchSomeActivity.launch(i);
+                PickImageDialog.build(new PickSetup()).show(MainActivity.this);
+//                launchSomeActivity.launch(i);
             }
         });
+    }
+
+    @Override
+    public void onPickResult(PickResult r) {
+        if (r.getError() == null) {
+            Toast.makeText(this, "Image uploaded", Toast.LENGTH_LONG).show();
+
+            processFinish(r.getBitmap());
+        } else {
+            //Handle possible errors
+            //TODO: do what you have to do with r.getError();
+            Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     ActivityResultLauncher<Intent> launchSomeActivity
