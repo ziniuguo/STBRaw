@@ -9,6 +9,7 @@ import java.net.URL;
 public class DownloadFromInternet extends AsyncTask<String, Void, Bitmap> {
 
     public AsyncResponse delegate = null;
+
     @Override
     protected Bitmap doInBackground(String... params) {
         URL url;
